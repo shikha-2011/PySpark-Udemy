@@ -16,10 +16,10 @@ if __name__ == "__main__":
     # RDDs are created using SparkContext unlikely DataFrames which are created using SparkSession
 
     # sc = SparkContext(conf=conf)
-    spark = SparkSession.builder() \
+    spark = SparkSession.builder \
         .config(conf=conf) \
         .getOrCreate()
-    sc = spark.SparkContext()
+    sc = spark.sparkContext
     logger = Log4J(spark)
 
     if sys.argv != 2:
@@ -33,4 +33,7 @@ if __name__ == "__main__":
     filteredRDD = selectRDD.filter(lambda r: r.Age < 40)
     kvRDD = filteredRDD.map(lambda r: (r.Country, 1))
     countRDD = kvRDD.reduceByKey(lambda v1, v2: v1 + v2)
-    
+    # countRDD = kvRDD.reduceByKey(add) ### without using lambda function
+    colList = countRDD.collect()
+    for x in colList:
+        logger.info(x)
